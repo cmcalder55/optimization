@@ -1,9 +1,8 @@
 # Optimization
 ## Guide
-### Bayes Estimation
-### Genetic Algorithm
-- Urban planning with genetic algorithms
-### Linear Regression
-### Log-Barrier Optimization
-### Matrix Factorization
-### Stochastic Backpropegation 
+- [Bayes Estimation](./bayes_estimation)
+- [Genetic Algorithm](./genetic_algorithm)
+- [Linear Regression](./linear_regression)
+- [Log-Barrier Optimization](./log_barrier)
+- [Matrix Factorization](./matrix_factorization)
+- [Stochastic Backpropegation](./stochastic_backpropegation)
