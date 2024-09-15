@@ -1,14 +1,26 @@
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+Created On:   2024/09/14
+Last Revision: 0000/00/00
+
+<DESCRIPTION>
+'''
 
 import inspect
-
 import numpy as np
-
 import matplotlib.pyplot as plt
+
+__author__= "Cameron Calder"
+__maintainer__= "Cameron Calder"
+__email__=""
+__copyright__ = "(C)Copyright 2024-Present, Cameron Calder"
+__license__=""
+__version__= "0.0.0"
 
 
 class NewtonsDescent():
-    """Newton's gradient descent method; steepest descent
-    """
+    """Newton's gradient descent method; steepest descent"""
     
     def __init__(self, k=10, epsilon=1e-5, t_stop=1e-6, alpha=1e-8, print_out=True, plot_out=True):
         self.printout = print_out

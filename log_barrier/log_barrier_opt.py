@@ -1,11 +1,25 @@
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+Created On:   2024/09/14
+Last Revision: 0000/00/00
 
-"""
-Log-Barrier Optimization
-"""
+Log-Barrier Optimization.
+'''
 
+import inspect
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import optimize as opt
+
+__author__= "Cameron Calder"
+__maintainer__= "Cameron Calder"
+__email__=""
+__copyright__ = "(C)Copyright 2024-Present, Cameron Calder"
+__license__=""
+__version__= "0.0.0"
+
 
 class LogBarrierOpt():
     """Log-Barrier Optimization main class.
@@ -166,3 +180,26 @@ class LogBarrierOpt():
         print(f"Best 'r' Value: {best_r:.2f}\nBest 't_stop' Value: {best_t_stop}\n")
 
         return best_r, best_t_stop
+    
+
+if __name__ == '__main__':
+
+    # example function optimization
+    start = (0.5, 0.5)
+
+    fx = lambda x: (x[0]-1)**2 + 2*(x[1]-2)**2
+    hx = (lambda x: 1 - x[0]**2 - x[1]**2, 
+          lambda x: x[0] + x[1])
+    
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        warnings.warn("deprecated", RuntimeWarning)
+
+        print("\nFunction to Minimize:\n", inspect.getsource(fx))
+        print("Contraints:\n", inspect.getsource(hx[0]))
+
+        opt = LogBarrierOpt(hx, fx, start=start)
+        pts = opt.result
+
+        opt.plotContour(pts)
+        

@@ -1,20 +1,29 @@
-# -*- coding: utf-8 -*-
-"""
-Use linear regression to 
-"""
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+Created On:   2024/09/14
+Last Revision: 0000/00/00
+
+<DESCRIPTION>
+'''
 
 import time
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-
-# keras imports
 from keras import regularizers
 from keras.layers import Dense, Dropout
 from keras.models import Sequential
 from keras.utils import to_categorical
 from keras.datasets import mnist, fashion_mnist
 from sklearn.datasets import fetch_california_housing
+
+__author__= "Cameron Calder"
+__maintainer__= "Cameron Calder"
+__email__=""
+__copyright__ = "(C)Copyright 2024-Present, Cameron Calder"
+__license__=""
+__version__= "0.0.0"
 
 
 class LinearRegression:
@@ -81,6 +90,7 @@ class LinearRegression:
             w = self.gradient_descent(w, X, y, yhat)
 
         return w
+ 
     
 def lin_reg(input_data):
     m, _ = input_data.data.shape
@@ -95,6 +105,7 @@ def lin_reg(input_data):
 
     print(theta)
 
+
 def plot_greyscale(imgs):
     # plot 4 images as gray scale
     plt.subplot(221)
@@ -107,6 +118,7 @@ def plot_greyscale(imgs):
     plt.imshow(imgs[3], cmap=plt.get_cmap('gray'))
     # show the plot
     plt.show()
+
 
 def normalize_img_data(X_train, y_train, X_test, y_test):
     # flatten 28*28 images to a 784 vector for each image
@@ -124,6 +136,7 @@ def normalize_img_data(X_train, y_train, X_test, y_test):
 
     return (X_train, y_train), (X_test, y_test)
 
+
 def baseline_model():
     
     # create model
@@ -137,6 +150,7 @@ def baseline_model():
     
     return model
 
+
 def regularization_model(reg = 0.007):
     # create model
     model = Sequential()
@@ -147,6 +161,7 @@ def regularization_model(reg = 0.007):
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
+
 def dropout_model(rate=0.5):
     # create model
     model = Sequential()
@@ -156,6 +171,7 @@ def dropout_model(rate=0.5):
     # complile
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
+
 
 def plot_history(model, title=""):
     history_dict = model.history
@@ -173,6 +189,7 @@ def plot_history(model, title=""):
     plt.legend()
 
     plt.show()
+
 
 def model_and_evaluate(X_train, y_train, X_test, y_test, model, title="", fixed_seed=None):
 
@@ -199,6 +216,7 @@ def model_and_evaluate(X_train, y_train, X_test, y_test, model, title="", fixed_
 
     return scores
 
+
 def run_model(data, m, title, fixed_seed):
     # load (downloaded if needed) the MNIST dataset
     (X_train, y_train), (X_test, y_test) = data
@@ -213,6 +231,7 @@ def run_model(data, m, title, fixed_seed):
 
     # fit model and evaluate
     model_and_evaluate(X_train, y_train, X_test, y_test, model, title, fixed_seed)
+
 
 def run_all_models(data, title="", fixed_seed=None):
     run_model(data, "base", title, fixed_seed)
@@ -235,6 +254,7 @@ def main(X, y, scale=False):
 
     return w
 
+
 if __name__ == "__main__":
 
     n = 500
@@ -249,3 +269,4 @@ if __name__ == "__main__":
     # tensorflow test with mnist datasets
     run_all_models(mnist.load_data())
     run_all_models(fashion_mnist.load_data())
+    

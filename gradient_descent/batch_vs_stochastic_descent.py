@@ -1,16 +1,27 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 23 14:24:15 2024
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+Created On:   2024/09/14
+Last Revision: 0000/00/00
 
-@author: camer
-"""
+<DESCRIPTION>
+'''
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
 from random import sample
+
+__author__= "Cameron Calder"
+__maintainer__= "Cameron Calder"
+__email__=""
+__copyright__ = "(C)Copyright 2020-Present, Cameron Calder"
+__license__=""
+__version__= "0.0.0"
+
 
 class PlotData():
     def __init__(self, figsize=(8,10)):
@@ -262,7 +273,7 @@ def make_descent(mode, X, y, start, rate):
                
 if __name__ == "__main__":
     
-    filepath = 'data.txt'
+    filepath = os.path.join(os.path.dirname(__file__), "data", "data.txt")
     df = pd.read_csv(filepath, header = None, delimiter = ",")
     
     # estimate using normal coeff regression
@@ -276,7 +287,6 @@ if __name__ == "__main__":
     reg = LinGD()
     eg = reg.main(Xg, yg)
     
-    
     # batch/stochastic GD
     X, y = df[0].to_numpy(), df[1].to_numpy()
     # intialize arrays for dataset as well as test/train set    
@@ -286,14 +296,3 @@ if __name__ == "__main__":
     modes = ["Stochastic", "Batch"]
     for mode in modes:
         make_descent(mode, X, y, start, rate)
-    
-    
-        
-        
-        
-        
-        
-        
-        
-        
-        
