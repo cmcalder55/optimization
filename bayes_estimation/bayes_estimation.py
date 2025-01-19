@@ -43,8 +43,7 @@ class BayesRisk():
         ax.set_title(title)
         ax.set_xlabel('x')
         ax.set_ylabel('Probability, P')
-
-        # print(len(data_vector))
+        
         if len(data_vector) > n_classes:
             data_vector = [data_vector]
 
@@ -83,10 +82,10 @@ class BayesRisk():
 
         data = {}
         for idx, risk in enumerate(risk_matrix):
-            R = np.sum([a*b for a,b in zip(br.posterior, risk)], 0)
+            R = np.sum([a*b for a,b in zip(self.posterior, risk)], 0)
             data[f"Class {idx+1}"] = R
 
-        return pd.DataFrame(data, index=x)
+        return pd.DataFrame(data, index=self.x)
 
     def plot_bayes_risk_threshold(self, risk_matrix, legends=[], title="Bayes Conditional Risk, R(αi|x)"):
         """sketch the Bayes risk (conditional risk R(αi|x) associated with the action αi
@@ -104,8 +103,8 @@ class BayesRisk():
         if not legends:
             legends = df.columns
 
-        plt.fill_between(self.x, df[legends[0]], where=(x < risk_threshold))
-        plt.fill_between(self.x, df[legends[1]], where=(x > risk_threshold))
+        plt.fill_between(self.x, df[legends[0]], where=(self.x < risk_threshold))
+        plt.fill_between(self.x, df[legends[1]], where=(self.x > risk_threshold))
 
         plt.legend(legends)
         plt.show()
@@ -146,10 +145,13 @@ def decision_boundary(mu, sigma, P, plot=False):
         for m, s_inv, s, p in zip(mu, sig_inv, sigma, P)
     ]
 
-    # Define the decision function g(x) = g1(x) - g2(x); when g1 = g2 --> g1-g2 = 0
+    # Define the decision function g(x) = g1(x) - g2(x); 
+    # when g1 = g2 --> g1-g2 = 0
     decision_function = lambda x1, x2: (
-        np.dot(np.dot([x1, x2], W[0]), [x1, x2]) + np.dot(w[0], [x1, x2]) + w0[0] -
-        (np.dot(np.dot([x1, x2], W[1]), [x1, x2]) + np.dot(w[1], [x1, x2]) + w0[1])
+        np.dot(np.dot([x1, x2], W[0]), [x1, x2]) + 
+        np.dot(w[0], [x1, x2]) + w0[0] -
+        (np.dot(np.dot([x1, x2], W[1]), [x1, x2]) +
+        np.dot(w[1], [x1, x2]) + w0[1])
     )
     if plot:
         plot_decision_boundary(mu, decision_function)
@@ -164,7 +166,8 @@ def bhattacharyya_error_bound(mu, sigma, P):
     
     # Calculate Bhattacharyya coefficients
     t1 = 1/8 * np.dot(np.dot(delta_mu.T, np.linalg.inv(avg_sigma)), delta_mu)
-    t2 = 0.5 * np.log(np.linalg.det(avg_sigma) / np.sqrt(np.linalg.det(sigma[0]) * np.linalg.det(sigma[1])))
+    t2 = 0.5 * np.log(np.linalg.det(avg_sigma) /
+                      np.sqrt(np.linalg.det(sigma[0]) * np.linalg.det(sigma[1])))
     
     boundary = np.sqrt(P[0] * P[1]) * np.exp(-(t1 + t2))
     print(f'\nBhattacharyya error bound: P(error) <= {boundary:.4f}')
