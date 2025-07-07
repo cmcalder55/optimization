@@ -13,65 +13,6 @@ import inspect
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Tuple, List
-from ...utils.plotter import PlotData
-
-__author__= "Cameron Calder"
-__maintainer__= "Cameron Calder"
-__email__=""
-__copyright__ = "(C)Copyright 2024-Present, Cameron Calder"
-__license__=""
-__version__= "0.0.0"
-
-
-class NormalRegCoeffs:
-    """Normal equation regression for linear models."""
-    def __init__(self, df):
-        self.m = df.shape[0]
-        self.X = df[0].to_numpy().reshape(self.m, 1)
-        self.y = df[1].to_numpy().reshape(self.m, 1)
-        self.plot = PlotData()
-    @staticmethod
-    def predict(X, w):
-        return X @ w
-    @staticmethod
-    def get_coeff_norm(X, y):
-        # Use pseudo-inverse for stability
-        return np.linalg.pinv(X) @ y
-    def main(self):
-        bias_X = np.hstack([self.X, np.ones((self.m, 1))])
-        w = self.get_coeff_norm(bias_X, self.y)
-        p = self.predict(bias_X, w)
-        print("Linear model: y = w0 + w1*x\n" \
-             f"Predicted regression coefficients: {w[0,0]:.4}, {w[1,0]:.4}\n")
-        fig1 = self.plot.plot_scatter(self.X, self.y, (2,1,1))
-        fig2 = self.plot.plot_line(self.X, self.y, p, (2,1,2))
-        return [fig1, fig2]
-
-class LinGD:
-    """Simple linear regression using gradient descent."""
-    def __init__(self, learning_rate: float = 1e-10, epochs: int = 10000):
-        self.learning_rate = learning_rate
-        self.epochs = epochs
-    @staticmethod
-    def yhat(X, w):
-        return w.T @ X
-    @staticmethod
-    def loss(yhat, y):
-        return np.mean((yhat - y) ** 2)
-    @staticmethod
-    def gradient(w, X, y, yhat):
-        return 2 / y.shape[1] * (X @ (yhat - y).T)
-    def main(self, X, y):
-        X = np.vstack([X, np.ones((1, X.shape[1]))])
-        w = np.zeros((X.shape[0], 1))
-        for epoch in range(self.epochs + 1):
-            yhat = self.yhat(X, w)
-            loss = self.loss(yhat, y)
-            if epoch % 2000 == 0:
-                print(f'cost at epoch {epoch} is {loss:.8}')
-            grad = self.gradient(w, X, y, yhat)
-            w -= self.learning_rate * grad
-        return w
 
 class GradientDescent:
     """Batch and stochastic gradient descent for linear regression."""
@@ -79,15 +20,19 @@ class GradientDescent:
         self.epochs = epochs
         self.learn = learning_rate
         self.tol = tol
+        
     @staticmethod
     def prediction(X: np.ndarray, w: np.ndarray) -> np.ndarray:
         return w.T @ X
+    
     @staticmethod
     def MSE(error: np.ndarray) -> float:
         return np.mean(error ** 2)
+    
     def descent(self, X: np.ndarray, error: np.ndarray, N: int) -> np.ndarray:
         dfdw = 2 / N * X @ error.T
         return -self.learn * dfdw
+    
     def _compute_errors(self, X: np.ndarray, y: np.ndarray, X_test: np.ndarray, 
                        y_test: np.ndarray, w: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         p_test = self.prediction(X_test, w)
@@ -95,6 +40,7 @@ class GradientDescent:
         p = self.prediction(X, w)
         error = p - y
         return error, t_error
+    
     def get_coeff_BGD(self, X: np.ndarray, y: np.ndarray, m: int, m_test: int, 
                       start: np.ndarray, X_test: np.ndarray, y_test: np.ndarray) -> Tuple[dict, dict]:
         X = np.vstack([X, np.ones((1, m))])
@@ -111,8 +57,10 @@ class GradientDescent:
                 break
             w += delta
         return test_error, train_error
+    
     def get_coeff_SGD(self, X: np.ndarray, y: np.ndarray, m: int, m_test: int, 
                       start: np.ndarray, X_test: np.ndarray, y_test: np.ndarray) -> Tuple[dict, dict]:
+        
         X = np.vstack([X, np.ones((1, m))])
         X_test = np.vstack([X_test, np.ones((1, m_test))])
         train_error = {}
@@ -130,6 +78,7 @@ class GradientDescent:
                 break
             w += delta
         return test_error, train_error
+    
     @staticmethod
     def _plot(rate: List[float], train: List[dict], test: List[dict], title: str, n: int) -> plt.Figure:
         rows = n // 2 + n % 2
@@ -155,6 +104,7 @@ class NewtonsDescent:
         self.epsilon = epsilon
         self.t_stop = t_stop
         self.alpha = alpha
+        
     def steepest_descent(self, minimizer):
         dim = len(inspect.getfullargspec(minimizer).args)
         start = np.ones(dim)
@@ -176,6 +126,7 @@ class NewtonsDescent:
         if self.plotout:
             self._plot_iter(costfxn)
         return costfxn
+    
     def gradient(self, minimizer, x):
         grad = np.zeros_like(x)
         fx = minimizer(*x)
@@ -184,6 +135,7 @@ class NewtonsDescent:
             x_eps[i] += self.epsilon
             grad[i] = (minimizer(*x_eps) - fx) / self.epsilon
         return grad
+    
     def hessian(self, minimizer, x, n):
         H = np.zeros((n, n))
         fx = minimizer(*x)
@@ -209,10 +161,12 @@ class NewtonsDescent:
                 f_mp = minimizer(*x_ij)
                 H[i, j] = H[j, i] = (f_pp - f_pm - f_mp + f_mm) / (4 * self.epsilon**2)
         return H
+    
     def get_alpha(self, gk, H):
         gk_H_gk = np.dot(gk, H @ gk)
         alpha = np.dot(gk, gk) / (gk_H_gk + self.alpha)
         return alpha
+    
     def _plot_iter(self, costfxn):
         iterations = list(costfxn.keys())
         objective_values = list(costfxn.values())
@@ -222,7 +176,8 @@ class NewtonsDescent:
         plt.xlabel('Iterations')
         plt.ylabel('f(x)')
         plt.grid(True)
-        plt.show()       
+        plt.show()      
+        
     def _print_output(self, x_final, minimizer, H_final):
         print('\nMinimizing x vector: \n' + str(x_final))
         print('\nObjective function value: ' + str(minimizer(*x_final)))
